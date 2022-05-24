@@ -14,13 +14,18 @@ import {
 import ball from "../assets/textures/football_1.jpg";
 
 const texture = new TextureLoader().load(ball);
-const g = new BoxGeometry(1, 1, 1);
+const g = new SphereGeometry(0.5, 32, 32);
 const m = new MeshStandardMaterial({
 	color: 0xff0000,
 	roughness: 0,
 });
 export default function ({ x, y, z }: { x: number; y: number; z: number }) {
-	const [ref, api] = useBox(() => ({ mass: 0.2, position: [x, y, z] }));
+	const [ref, api] = useSphere(() => ({
+		mass: 0.02,
+		position: [x, y, z],
+		args: [0.5],
+		collisionResponse: true,
+	}));
 	const [v, setV] = useState(0);
 	const [originalVelocity, setO] = useState([0, 0, 0]);
 	const [p, setP] = useState([0, 0, 0]);

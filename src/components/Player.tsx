@@ -7,7 +7,7 @@ import useStore from "../hooks/useStore";
 
 function Player({ ...props }) {
 	useInput();
-	const PLAYER_BOUNDARY = 100;
+	const PLAYER_BOUNDARY = 30;
 	const PLAYER_SPEED = 6;
 	const velocity = useRef([0, 0, 0]);
 	const position = useRef(new Vector3(0, 2, 0));

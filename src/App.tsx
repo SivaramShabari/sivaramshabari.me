@@ -16,10 +16,10 @@ audio = new Audio("src/assets/happier2.mp3");
 function App() {
 	const array = useMemo(
 		() =>
-			Array.from({ length: 100 }, () => [
-				getRandomInt(-20, 20),
+			Array.from({ length: 20 }, () => [
+				getRandomInt(-10, 10),
 				getRandomInt(2, 6),
-				getRandomInt(-20, 20),
+				getRandomInt(-10, 10),
 			]),
 		[]
 	);
@@ -170,12 +170,12 @@ function App() {
 				<ambientLight intensity={0.1} />
 				{!isCameraLocked && <OrbitControls />}
 				<Physics gravity={[0, -30, 0]}>
+					{" "}
 					<Ground />
 					<Player />
 					{array.map(([x, y, z], i) => (
 						<Ball key={i} x={x} y={y} z={z} />
 					))}
-
 					{/* <InfoCard /> */}
 				</Physics>
 				<Suspense>
