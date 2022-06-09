@@ -1,48 +1,52 @@
-import { usePlane } from "@react-three/cannon";
-import { useHelper } from "@react-three/drei";
-import { useThree } from "@react-three/fiber";
-import {
-	AxesHelper,
-	MeshStandardMaterial,
-	PCFSoftShadowMap,
-	PlaneBufferGeometry,
-	RepeatWrapping,
-	TextureLoader,
-} from "three";
-import wood from "../assets/textures/floor/color.jpg";
-import normal from "../assets/textures/floor/normal.jpg";
-const texture = new TextureLoader().load(wood);
-const normalMap = new TextureLoader().load(normal);
-texture.repeat.set(80, 50);
-normalMap.repeat.set(80, 50);
-texture.wrapS = RepeatWrapping;
-texture.wrapT = RepeatWrapping;
-normalMap.wrapS = RepeatWrapping;
-normalMap.wrapT = RepeatWrapping;
-const planeBufferGeometry = new PlaneBufferGeometry(500, 500);
-const meshStandardMaterial = new MeshStandardMaterial({
-	roughness: 0.01,
-	color: 0xffffff,
-	metalness: 0.5,
+import { MeshReflectorMaterial, Reflector } from "@react-three/drei";
+import { useLoader } from "@react-three/fiber";
+import { useEffect, useRef } from "react";
+import { LinearEncoding, RepeatWrapping, TextureLoader } from "three";
+import textureMap from "../assets/textures/Road_Texture.jpg";
+import normalMap from "../assets/textures/terrain-normal.jpg";
+import roughnessMap from "../assets/textures/terrain-roughness.jpg";
+
+const texture = new TextureLoader().load(textureMap);
+const normal = new TextureLoader().load(normalMap);
+const roughness = new TextureLoader().load(roughnessMap);
+[normal, roughness].forEach((t) => {
+	t.wrapS = RepeatWrapping;
+	t.wrapT = RepeatWrapping;
+	t.repeat.set(5, 5);
+	t.offset.set(0, 0);
 });
-function Ground(props: any) {
-	const { gl } = useThree();
-	gl.setClearColor(0x000000, 1);
-	gl.shadowMap.enabled = true;
-	gl.shadowMap.type = PCFSoftShadowMap;
-	gl.shadowMap.needsUpdate = true;
-	const [ref] = usePlane(() => ({
-		rotation: [-Math.PI / 2, 0, 0],
-		position: [0, 0, 0],
-	}));
+texture.rotation = Math.PI / 2;
+normal.encoding = LinearEncoding;
+function Ground() {
+	const plane = useRef<any>();
+	useEffect(() => {
+		if (plane.current) plane.current.rotation.x = -Math.PI / 2;
+	}, [plane]);
+
 	return (
-		<mesh
-			ref={ref as any}
-			geometry={planeBufferGeometry}
-			material={meshStandardMaterial}
-			castShadow
-			receiveShadow
-		></mesh>
+		<>
+			<mesh ref={plane} receiveShadow>
+				<planeGeometry attach="geometry" args={[30, 50]} />
+				<MeshReflectorMaterial
+					envMapIntensity={0}
+					normalMap={normal}
+					roughnessMap={roughness}
+					dithering={true}
+					color={[0.02, 0.02, 0.02]}
+					roughness={0.1}
+					blur={[1000, 400]}
+					mixBlur={30}
+					mixStrength={80}
+					mixContrast={1}
+					resolution={1024}
+					mirror={0}
+					depthScale={0.01}
+					minDepthThreshold={0.9}
+					maxDepthThreshold={1}
+					reflectorOffset={0.2}
+				/>
+			</mesh>
+		</>
 	);
 }
 
