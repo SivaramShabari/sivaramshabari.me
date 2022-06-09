@@ -46,7 +46,7 @@ interface State {
 }
 
 const useStore = create<State>((set) => ({
-	playerPosition: new Vector3(0, 0, 0),
+	playerPosition: new Vector3(0, 0, 20),
 	setPlayerPosition: (position) =>
 		set((state) => {
 			return {

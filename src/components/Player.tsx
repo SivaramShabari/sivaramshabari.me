@@ -7,10 +7,10 @@ import useStore from "../hooks/useStore";
 
 function Player({ ...props }) {
 	useInput();
-	const PLAYER_BOUNDARY = 30;
+	const PLAYER_BOUNDARY = 25;
 	const PLAYER_SPEED = 6;
 	const velocity = useRef([0, 0, 0]);
-	const position = useRef(new Vector3(0, 2, 0));
+	const position = useRef(new Vector3(0, 2, 20));
 
 	const setPlayerPosition = useStore((state) => state.setPlayerPosition);
 	const input = useStore((state) => state.input);
@@ -20,6 +20,7 @@ function Player({ ...props }) {
 	const [ref, api] = useSphere(() => ({
 		mass: 2,
 		type: "Dynamic",
+		position: [position.current.x, position.current.y, position.current.z],
 		...props,
 	}));
 	useEffect(() => {
@@ -41,10 +42,10 @@ function Player({ ...props }) {
 			position.current = new Vector3(x, p[1], z);
 			setPlayerPosition(position.current);
 			if (
-				p[0] < -30 ||
-				p[0] > 30 ||
-				p[2] < -30 ||
-				p[2] > 30 ||
+				p[0] < -PLAYER_BOUNDARY ||
+				p[0] > PLAYER_BOUNDARY ||
+				p[2] < -PLAYER_BOUNDARY ||
+				p[2] > PLAYER_BOUNDARY ||
 				p[1] < -5 ||
 				p[1] > 5
 			)

@@ -1,29 +1,23 @@
-import { useBox, useSphere } from "@react-three/cannon";
+import { useBox } from "@react-three/cannon";
 import { useFrame } from "@react-three/fiber";
-import { applyProps } from "@react-three/fiber/dist/declarations/src/core/utils";
 import { useEffect, useState } from "react";
-import {
-	BoxGeometry,
-	MeshBasicMaterial,
-	MeshStandardMaterial,
-	SphereGeometry,
-	TextureLoader,
-	Vector3,
-} from "three";
+import { BoxBufferGeometry, MeshStandardMaterial, TextureLoader } from "three";
 
 import ball from "../assets/textures/football_1.jpg";
 
+const BOX_SIZE: [x: number, y: number, z: number] = [0.5, 4, 0.5];
 const texture = new TextureLoader().load(ball);
-const g = new SphereGeometry(0.5, 32, 32);
-const m = new MeshStandardMaterial({
+const geometry = new BoxBufferGeometry(BOX_SIZE[0], BOX_SIZE[1], BOX_SIZE[2]);
+const material = new MeshStandardMaterial({
 	color: 0xff0000,
 	roughness: 0,
+	emissive: 0xaa0000,
 });
 export default function ({ x, y, z }: { x: number; y: number; z: number }) {
-	const [ref, api] = useSphere(() => ({
+	const [ref, api] = useBox(() => ({
 		mass: 0.02,
 		position: [x, y, z],
-		args: [0.5],
+		args: BOX_SIZE,
 		collisionResponse: true,
 	}));
 	const [v, setV] = useState(0);
@@ -59,8 +53,8 @@ export default function ({ x, y, z }: { x: number; y: number; z: number }) {
 				castShadow
 				receiveShadow
 				ref={ref as any}
-				geometry={g}
-				material={m}
+				geometry={geometry}
+				material={material}
 			/>
 		</>
 	);

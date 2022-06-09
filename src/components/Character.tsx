@@ -5,27 +5,18 @@ import { useInput } from "../hooks/useInput";
 import { useEffect, useMemo, useState } from "react";
 import useStore from "../hooks/useStore";
 export default function Model({ ...props }) {
-	const model = useMemo(() => useFBX("src/assets/models/ybot.fbx"), []);
+	const model = useMemo(() => useFBX("src/assets/models/Alex.fbx"), []);
 	const idle = useMemo(() => useFBX("src/assets/models/idle.fbx"), []);
 	const walk = useMemo(() => useFBX("src/assets/models/walk.fbx"), []);
 	const walkB = useMemo(() => useFBX("src/assets/models/walk_back.fbx"), []);
-	const walkL = useMemo(() => useFBX("src/assets/models/walk_left.fbx"), []);
-	const walkR = useMemo(() => useFBX("src/assets/models/walk_right.fbx"), []);
 	const run = useMemo(() => useFBX("src/assets/models/run.fbx"), []);
-	const jump = useMemo(() => useFBX("src/assets/models/jump.fbx"), []);
-	const dance1 = useMemo(() => useFBX("src/assets/models/dance_1.fbx"), []);
-	const dance2 = useMemo(() => useFBX("src/assets/models/dance_2.fbx"), []);
+	const dance = useMemo(() => useFBX("src/assets/models/dance_1.fbx"), []);
 	const mixer = useMemo(() => new AnimationMixer(model), []);
 	const idleAction = useMemo(() => mixer.clipAction(idle.animations[0]), []);
 	const walkAction = useMemo(() => mixer.clipAction(walk.animations[0]), []);
 	const wBackAction = useMemo(() => mixer.clipAction(walkB.animations[0]), []);
-	const wLeftAction = useMemo(() => mixer.clipAction(walkL.animations[0]), []);
-	const wRightAction = useMemo(() => mixer.clipAction(walkR.animations[0]), []);
-	const jumpAction = useMemo(() => mixer.clipAction(jump.animations[0]), []);
 	const runAction = useMemo(() => mixer.clipAction(run.animations[0]), []);
-	const d1Action = useMemo(() => mixer.clipAction(dance1.animations[0]), []);
-	const d2Action = useMemo(() => mixer.clipAction(dance2.animations[0]), []);
-	useInput();
+	const d1Action = useMemo(() => mixer.clipAction(dance.animations[0]), []);
 	const input = useStore((state) => state.input);
 	const position = useStore((state) => state.playerPosition);
 	const quaternion = useStore((state) => state.playerQuaternion);
@@ -33,7 +24,7 @@ export default function Model({ ...props }) {
 		prev: { name: "idle", action: idleAction },
 		current: { name: "idle", action: idleAction },
 	});
-
+	useInput();
 	useEffect(() => {
 		idleAction.play();
 		model.castShadow = true;
@@ -60,34 +51,13 @@ export default function Model({ ...props }) {
 				prev: s.current,
 				current: { name: "back", action: wBackAction },
 			}));
-		} else if (input.jump) {
-			set((s) => ({
-				prev: s.current,
-				current: { name: "jump", action: jumpAction },
-			}));
 		} else if (input.shoot) {
-			if (state.current.name !== "dance2")
-				set((s) => ({
-					prev: s.current,
-					current: { name: "dance1", action: d1Action },
-				}));
-			else
-				set((s) => ({
-					prev: s.current,
-					current: { name: "dance2", action: d2Action },
-				}));
-		} else if (input.left) {
 			set((s) => ({
 				prev: s.current,
-				current: { name: "left", action: wLeftAction },
-			}));
-		} else if (input.right) {
-			set((s) => ({
-				prev: s.current,
-				current: { name: "right", action: wRightAction },
+				current: { name: "dance", action: d1Action },
 			}));
 		} else {
-			if (state.current.name !== "dance1" && state.current.name !== "dance2")
+			if (state.current.name !== "dance")
 				set((s) => ({
 					prev: s.current,
 					current: { name: "idle", action: idleAction },
@@ -116,7 +86,7 @@ export default function Model({ ...props }) {
 		}
 	}, [state]);
 
-	useFrame(({ clock }, delta) => {
+	useFrame((_, delta) => {
 		mixer.update(delta);
 		model.quaternion.copy(quaternion);
 		model.position.copy(new Vector3(position.x, position.y - 1, position.z));
@@ -125,7 +95,7 @@ export default function Model({ ...props }) {
 	return <primitive scale={0.025} object={model} />;
 }
 
-useFBX.preload("src/assets/models/ybot.fbx");
+useFBX.preload("src/assets/models/Alex.fbx");
 useFBX.preload("src/assets/models/idle.fbx");
 useFBX.preload("src/assets/models/walk.fbx");
 useFBX.preload("src/assets/models/run.fbx");
